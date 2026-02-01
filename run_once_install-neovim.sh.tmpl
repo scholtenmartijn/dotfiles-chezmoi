@@ -20,6 +20,30 @@ fi
 echo "Installing Neovim plugin dependencies..."
 sudo apt install -y python3-full python3-venv python3-pynvim luarocks
 
+# Install Node.js (required for LSP servers: pyright, yamlls, dockerls, bashls)
+if ! command -v node &> /dev/null; then
+    echo "Installing Node.js (required for LSP servers)..."
+    curl -fsSL https://deb.nodesource.com/setup_lts.x | sudo -E bash -
+    sudo apt install -y nodejs
+else
+    echo "✓ Node.js already installed"
+fi
+
+# Install Go (required for gopls LSP)
+if ! command -v go &> /dev/null; then
+    echo "Installing Go (required for gopls)..."
+    GO_VERSION="1.23.4"
+    curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tar.gz
+    sudo rm -rf /usr/local/go
+    sudo tar -C /usr/local -xzf /tmp/go.tar.gz
+    rm /tmp/go.tar.gz
+else
+    echo "✓ Go already installed"
+fi
+
+# Ensure Go is in PATH for this session (needed for Mason to install gopls)
+export PATH=$PATH:/usr/local/go/bin
+
 # Install Nerd Fonts (MesloLGS NF - recommended for Powerlevel10k)
 FONT_DIR="${HOME}/.local/share/fonts"
 FONT_NAME="MesloLGS NF Regular.ttf"
@@ -59,6 +83,22 @@ fi
 # Install dependencies
 brew install python lua luarocks
 pip3 install pynvim
+
+# Install Node.js (required for LSP servers: pyright, yamlls, dockerls, bashls)
+if ! command -v node &> /dev/null; then
+    echo "Installing Node.js (required for LSP servers)..."
+    brew install node
+else
+    echo "✓ Node.js already installed"
+fi
+
+# Install Go (required for gopls LSP)
+if ! command -v go &> /dev/null; then
+    echo "Installing Go (required for gopls)..."
+    brew install go
+else
+    echo "✓ Go already installed"
+fi
 
 # Install Nerd Fonts via Homebrew
 if ! brew list --cask font-meslo-lg-nerd-font &> /dev/null; then
