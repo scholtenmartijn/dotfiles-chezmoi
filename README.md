@@ -1,6 +1,50 @@
 # Dotfiles (Chezmoi)
 
+> **Warning**
+> This is a personal development environment configuration. Use at your own risk. These dotfiles will install software and modify system configurations. Review the scripts before running on your machine.
+
 Personal dotfiles managed with [chezmoi](https://www.chezmoi.io/).
+
+## Quick Install (From Scratch)
+
+Bootstrap a new machine with a single command:
+
+```bash
+sh -c "$(curl -fsLS get.chezmoi.io)" -- init --apply mrcontainer/dotfiles-chezmoi
+```
+
+After installation, set zsh as default and restart your session:
+```bash
+chsh -s $(which zsh)
+```
+
+## Testing / Reset Chezmoi
+
+To reset chezmoi and start fresh (useful for testing):
+
+```bash
+# Remove chezmoi state and source directory
+rm -rf ~/.local/share/chezmoi ~/.config/chezmoi
+
+# Remove applied dotfiles (optional - be careful!)
+rm -rf ~/.zshrc ~/.p10k.zsh ~/.gitconfig ~/.config/nvim
+
+# Re-initialize from local repo (from your dotfiles-chezmoi directory)
+chezmoi init --apply .
+
+# Or re-initialize from remote
+chezmoi init --apply mrcontainer/dotfiles-chezmoi
+```
+
+To see what chezmoi would change without applying:
+```bash
+chezmoi diff
+```
+
+To run a dry-run of the apply:
+```bash
+chezmoi apply --dry-run --verbose
+```
 
 ## Prerequisites
 
@@ -63,6 +107,16 @@ This will:
 4. Install development tools (kubectl, docker, azure-cli, aws-cli, claude-code)
 5. Install and configure Neovim with LSP, treesitter, and plugins
 6. Apply all dotfiles
+
+## Post-Install Steps
+
+After the initial setup, run the following to set zsh as your default shell:
+
+```bash
+chsh -s $(which zsh)
+```
+
+Then **log out and log back in** (or reboot) for the change to take effect.
 
 ## What's Included
 

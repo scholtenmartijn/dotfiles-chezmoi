@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-echo "=== Installing Neovim ==="
+echo "=== Installing Neovim and Dependencies ==="
 
 {{ if eq .chezmoi.os "linux" }}
 {{ if or (eq .chezmoi.osRelease.id "ubuntu") (eq .chezmoi.osRelease.id "pop") }}
@@ -18,10 +18,33 @@ fi
 
 # Install dependencies for plugins
 echo "Installing Neovim plugin dependencies..."
-sudo apt install -y python3-pip python3-venv luarocks
+sudo apt install -y python3-full python3-venv python3-pynvim luarocks
 
-# Install pynvim for Python support
-pip3 install --user pynvim
+# Install Nerd Fonts (MesloLGS NF - recommended for Powerlevel10k)
+FONT_DIR="${HOME}/.local/share/fonts"
+FONT_NAME="MesloLGS NF Regular.ttf"
+
+if [ ! -f "${FONT_DIR}/${FONT_NAME}" ]; then
+    echo "Installing MesloLGS Nerd Font..."
+    mkdir -p "${FONT_DIR}"
+
+    # Download MesloLGS NF fonts (recommended by p10k)
+    curl -fLo "${FONT_DIR}/MesloLGS NF Regular.ttf" \
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf"
+    curl -fLo "${FONT_DIR}/MesloLGS NF Bold.ttf" \
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf"
+    curl -fLo "${FONT_DIR}/MesloLGS NF Italic.ttf" \
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf"
+    curl -fLo "${FONT_DIR}/MesloLGS NF Bold Italic.ttf" \
+        "https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf"
+
+    # Refresh font cache
+    fc-cache -f -v
+    echo "✓ MesloLGS Nerd Font installed"
+    echo "  NOTE: Set your terminal font to 'MesloLGS NF' for icons to display correctly"
+else
+    echo "✓ MesloLGS Nerd Font already installed"
+fi
 
 {{ end }}
 {{ else if eq .chezmoi.os "darwin" }}
@@ -37,6 +60,17 @@ fi
 brew install python lua luarocks
 pip3 install pynvim
 
+# Install Nerd Fonts via Homebrew
+if ! brew list --cask font-meslo-lg-nerd-font &> /dev/null; then
+    echo "Installing MesloLGS Nerd Font..."
+    brew tap homebrew/cask-fonts
+    brew install --cask font-meslo-lg-nerd-font
+    echo "✓ MesloLGS Nerd Font installed"
+    echo "  NOTE: Set your terminal font to 'MesloLGS NF' for icons to display correctly"
+else
+    echo "✓ MesloLGS Nerd Font already installed"
+fi
+
 {{ end }}
 
-echo "✓ Neovim installed successfully"
+echo "✓ Neovim and dependencies installed successfully"
