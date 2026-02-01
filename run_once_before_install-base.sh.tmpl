@@ -1,0 +1,75 @@
+#!/bin/bash
+set -e
+
+echo "=== Installing base system packages ==="
+
+{{ if eq .chezmoi.os "linux" }}
+{{ if or (eq .chezmoi.osRelease.id "ubuntu") (eq .chezmoi.osRelease.id "pop") }}
+
+# Update package lists
+sudo apt update
+
+# Install essential packages
+PACKAGES=(
+    curl
+    wget
+    git
+    unzip
+    build-essential
+    software-properties-common
+    apt-transport-https
+    ca-certificates
+    gnupg
+    lsb-release
+    jq
+    ripgrep
+    fd-find
+    fzf
+    tmux
+    htop
+)
+
+for pkg in "${PACKAGES[@]}"; do
+    if dpkg -l "$pkg" &> /dev/null; then
+        echo "✓ $pkg already installed"
+    else
+        echo "Installing $pkg..."
+        sudo apt install -y "$pkg"
+    fi
+done
+
+{{ end }}
+{{ else if eq .chezmoi.os "darwin" }}
+
+# Check for Homebrew
+if ! command -v brew &> /dev/null; then
+    echo "Installing Homebrew..."
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+fi
+
+# Install essential packages
+PACKAGES=(
+    curl
+    wget
+    git
+    unzip
+    jq
+    ripgrep
+    fd
+    fzf
+    tmux
+    htop
+)
+
+for pkg in "${PACKAGES[@]}"; do
+    if brew list "$pkg" &> /dev/null; then
+        echo "✓ $pkg already installed"
+    else
+        echo "Installing $pkg..."
+        brew install "$pkg"
+    fi
+done
+
+{{ end }}
+
+echo "✓ Base packages installed successfully"

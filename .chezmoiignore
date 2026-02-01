@@ -1,0 +1,21 @@
+# Ignore README and docs
+README.md
+AGENTS.md
+LICENSE
+
+# Ignore OS-specific files
+{{- if ne .chezmoi.os "darwin" }}
+# Ignore macOS-specific files on non-macOS
+.Brewfile
+{{- end }}
+
+{{- if ne .chezmoi.os "linux" }}
+# Ignore Linux-specific files on non-Linux
+{{- end }}
+
+# Ignore sensitive files
+.env
+.env.*
+*.pem
+*.key
+credentials.json

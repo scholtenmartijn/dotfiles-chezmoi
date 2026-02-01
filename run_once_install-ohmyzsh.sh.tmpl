@@ -1,0 +1,60 @@
+#!/bin/bash
+set -e
+
+echo "=== Installing Oh-My-Zsh and Powerlevel10k ==="
+
+# Install zsh if not present
+{{ if eq .chezmoi.os "linux" }}
+if ! command -v zsh &> /dev/null; then
+    echo "Installing zsh..."
+    sudo apt install -y zsh
+fi
+{{ else if eq .chezmoi.os "darwin" }}
+if ! command -v zsh &> /dev/null; then
+    echo "Installing zsh..."
+    brew install zsh
+fi
+{{ end }}
+
+# Install Oh-My-Zsh
+if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    echo "Installing Oh-My-Zsh..."
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+else
+    echo "✓ Oh-My-Zsh already installed"
+fi
+
+# Install Powerlevel10k theme
+P10K_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+if [ ! -d "$P10K_DIR" ]; then
+    echo "Installing Powerlevel10k..."
+    git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "$P10K_DIR"
+else
+    echo "✓ Powerlevel10k already installed"
+fi
+
+# Install zsh-autosuggestions
+AUTOSUGGESTIONS_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-autosuggestions"
+if [ ! -d "$AUTOSUGGESTIONS_DIR" ]; then
+    echo "Installing zsh-autosuggestions..."
+    git clone https://github.com/zsh-users/zsh-autosuggestions "$AUTOSUGGESTIONS_DIR"
+else
+    echo "✓ zsh-autosuggestions already installed"
+fi
+
+# Install zsh-syntax-highlighting
+SYNTAX_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/zsh-syntax-highlighting"
+if [ ! -d "$SYNTAX_DIR" ]; then
+    echo "Installing zsh-syntax-highlighting..."
+    git clone https://github.com/zsh-users/zsh-syntax-highlighting.git "$SYNTAX_DIR"
+else
+    echo "✓ zsh-syntax-highlighting already installed"
+fi
+
+# Set zsh as default shell
+if [ "$SHELL" != "$(which zsh)" ]; then
+    echo "Setting zsh as default shell..."
+    chsh -s "$(which zsh)"
+fi
+
+echo "✓ Oh-My-Zsh and plugins installed successfully"

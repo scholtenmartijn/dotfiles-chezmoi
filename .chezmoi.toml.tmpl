@@ -1,0 +1,17 @@
+[data]
+    name = "{{ .chezmoi.username }}"
+{{- if eq .chezmoi.os "darwin" }}
+    os = "macos"
+{{- else if eq .chezmoi.os "linux" }}
+    {{- if or (eq .chezmoi.osRelease.id "ubuntu") (eq .chezmoi.osRelease.id "pop") }}
+    os = "ubuntu"
+    {{- else }}
+    os = "linux"
+    {{- end }}
+{{- end }}
+
+[edit]
+    command = "nvim"
+
+[diff]
+    pager = "less -R"
