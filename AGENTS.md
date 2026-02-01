@@ -59,7 +59,25 @@ git config --global user.signingkey <key-id>
 git config --global commit.gpgsign true
 ```
 
-**3. Chezmoi Installation:**
+**3. MesloLGS NF Font Installation:**
+Required for powerlevel10k icons and Alacritty terminal.
+```bash
+# Download and install MesloLGS NF fonts
+# Ubuntu/Pop!_OS:
+mkdir -p ~/.local/share/fonts
+cd ~/.local/share/fonts
+curl -fLO https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf
+curl -fLO https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf
+curl -fLO https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf
+curl -fLO https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf
+fc-cache -fv
+
+# macOS (via Homebrew):
+brew tap homebrew/cask-fonts
+brew install --cask font-meslo-lg-nerd-font
+```
+
+**4. Chezmoi Installation:**
 
 *Ubuntu/Pop!_OS:*
 ```bash
@@ -95,6 +113,8 @@ The `run_once` script should install:
 - **claude-code** - AI coding assistant
 - **azure-cli** - Azure cloud management CLI
 - **aws-cli** - AWS cloud management CLI
+- **alacritty** - GPU-accelerated terminal emulator
+- **MesloLGS NF font** - Nerd Font required for powerlevel10k and Alacritty
 
 ### Neovim Configuration Requirements
 Must be **production-ready** for immediate development work with:
@@ -124,6 +144,31 @@ Must be **production-ready** for immediate development work with:
   - Inline code suggestions and completions
   - Code explanation and refactoring assistance
   - Configure with preferred AI provider (Anthropic Claude recommended)
+
+### Alacritty Configuration Requirements
+
+**Font:**
+- MesloLGS NF (Nerd Font) - same font used by powerlevel10k for icon consistency
+- Size 12.0 as default
+
+**Theme:**
+- Tokyo Night color scheme for consistency across tools
+- Matches well with Neovim Tokyo Night theme if used
+
+**Core Settings:**
+- 256-color terminal support (`TERM = "xterm-256color"`)
+- 10000 lines of scrollback history
+- Clipboard integration (selection auto-saves to clipboard)
+- Block cursor style
+
+**Keyboard Bindings:**
+- Ctrl+Shift+C/V for copy/paste
+- Ctrl+Shift+N for new instance
+- Ctrl+Plus/Minus/0 for font size adjustment
+
+**Cross-Platform:**
+- Configuration works on both macOS and Linux without modification
+- Window decorations set to "full" for native look on both platforms
 
 ### Oh-My-Zsh Configuration Requirements
 
@@ -177,15 +222,23 @@ alias dps='docker ps'
 ├── run_once_install-devtools.sh.tmpl     # kubectl, docker, claude-code
 ├── run_once_install-neovim.sh.tmpl       # Neovim installation
 ├── dot_zshrc.tmpl                        # Zsh configuration
-├── dot_p10k.zsh.tmpl                     # Powerlevel10k config
+├── dot_p10k.zsh                          # Powerlevel10k config
 ├── dot_gitconfig.tmpl                    # Git configuration
 ├── dot_config/
 │   ├── nvim/
 │   │   ├── init.lua                      # Main neovim config
-│   │   ├── lua/
-│   │   │   ├── plugins/                  # Plugin configurations
-│   │   │   ├── lsp/                      # LSP configurations
-│   │   │   └── config/                   # General settings
+│   │   └── lua/
+│   │       ├── plugins/                  # Plugin configurations
+│   │       │   ├── init.lua              # Plugin manager setup (lazy.nvim)
+│   │       │   ├── lsp.lua               # LSP configuration
+│   │       │   ├── go.lua                # Go-specific plugins
+│   │       │   ├── avante.lua            # AI assistant plugin
+│   │       │   └── formatting.lua        # Auto-formatting setup
+│   │       └── config/                   # General settings
+│   │           ├── options.lua           # Neovim options
+│   │           └── keymaps.lua           # Key mappings
+│   ├── alacritty/
+│   │   └── alacritty.toml                # Alacritty terminal config
 │   └── k9s/                              # K9s configuration (if used)
 └── README.md                             # Setup instructions
 ```
@@ -315,6 +368,8 @@ Before suggesting any configuration is complete, verify:
 - [ ] Neovim is production-ready (LSP + formatting + navigation work)
 - [ ] Oh-my-zsh has all required plugins
 - [ ] Aliases `v` and `k` are configured
+- [ ] Alacritty configured with proper font and theme
+- [ ] MesloLGS NF font is installed (required for p10k and Alacritty)
 - [ ] No hardcoded paths that differ between systems
 - [ ] README.md documents the setup process
 - [ ] No automatic command execution in suggestions
@@ -340,10 +395,11 @@ When user encounters issues:
 
 Setup is complete when user can:
 1. Run `chezmoi init --apply <repo>` on fresh Ubuntu/macOS machine
-2. Have fully functional development environment in < 10 minutes
+2. Have fully functional development environment
 3. Open nvim and immediately start coding Go/Python/YAML
 4. Use kubectl with proper completions and context switching
 5. Have consistent shell experience across all machines
+6. Launch Alacritty with proper fonts, colors (Tokyo Night), and keybindings
 
 ## Notes
 - User prefers seeing all commands before execution

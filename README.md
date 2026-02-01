@@ -27,7 +27,7 @@ To reset chezmoi and start fresh (useful for testing):
 rm -rf ~/.local/share/chezmoi ~/.config/chezmoi
 
 # Remove applied dotfiles (optional - be careful!)
-rm -rf ~/.zshrc ~/.p10k.zsh ~/.gitconfig ~/.config/nvim
+rm -rf ~/.zshrc ~/.p10k.zsh ~/.gitconfig ~/.config/nvim ~/.config/alacritty
 
 # Re-initialize from local repo (from your dotfiles-chezmoi directory)
 chezmoi init --apply .
@@ -81,16 +81,14 @@ git config --global user.signingkey <key-id>
 git config --global commit.gpgsign true
 ```
 
-### 3. Install Chezmoi
+### 3. MesloLGS NF Font
+Required for Powerlevel10k and Alacritty. Download from [powerlevel10k-media](https://github.com/romkatv/powerlevel10k-media) or install via `brew install --cask font-meslo-lg-nerd-font` on macOS.
+
+### 4. Install Chezmoi
 ```bash
-# Ubuntu/Pop!_OS (recommended)
-sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin
-
-# macOS
-brew install chezmoi
+sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin  # Ubuntu/Pop!_OS
+brew install chezmoi                                      # macOS
 ```
-
-Ensure `~/.local/bin` is in your PATH.
 
 ## Quick Start
 
@@ -106,7 +104,8 @@ This will:
 3. Install and configure Oh-My-Zsh with Powerlevel10k
 4. Install development tools (kubectl, docker, azure-cli, aws-cli, claude-code)
 5. Install and configure Neovim with LSP, treesitter, and plugins
-6. Apply all dotfiles
+6. Configure Alacritty terminal (Tokyo Night theme)
+7. Apply all dotfiles
 
 ## Post-Install Steps
 
@@ -120,7 +119,8 @@ Then **log out and log back in** (or reboot) for the change to take effect.
 
 ## What's Included
 
-### Shell
+### Terminal
+- **Alacritty** - GPU-accelerated terminal with Tokyo Night theme
 - **Oh-My-Zsh** with Powerlevel10k theme
 - Plugins: git, kubectl, kubectx, docker, terraform, aws, azure, zsh-autosuggestions, zsh-syntax-highlighting
 - Useful aliases for kubectl, terraform, docker, git, and more
@@ -233,6 +233,8 @@ Edit `~/.gitconfig` to set your email and GPG signing key.
 ├── dot_p10k.zsh                 # Powerlevel10k config
 ├── dot_gitconfig.tmpl           # Git configuration
 └── dot_config/
+    ├── alacritty/
+    │   └── alacritty.toml           # Terminal config (Tokyo Night)
     └── nvim/
         ├── init.lua
         └── lua/

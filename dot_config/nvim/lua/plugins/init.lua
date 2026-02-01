@@ -86,29 +86,24 @@ return {
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "lua",
-          "vim",
-          "vimdoc",
-          "go",
-          "gomod",
-          "gosum",
-          "python",
-          "yaml",
-          "json",
-          "toml",
-          "hcl",
-          "terraform",
-          "dockerfile",
-          "bash",
-          "markdown",
-          "markdown_inline",
-        },
-        auto_install = true,
-        highlight = { enable = true },
-        indent = { enable = true },
+      -- Install parsers
+      local parsers = {
+        "lua", "vim", "vimdoc", "go", "gomod", "gosum", "python",
+        "yaml", "json", "toml", "hcl", "terraform", "dockerfile",
+        "bash", "markdown", "markdown_inline",
+      }
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
       })
+      -- Ensure parsers are installed
+      local installed = vim.tbl_keys(vim.treesitter.language.get_installed and vim.treesitter.language.get_installed() or {})
+      for _, parser in ipairs(parsers) do
+        if not vim.tbl_contains(installed, parser) then
+          pcall(vim.cmd, "TSInstall " .. parser)
+        end
+      end
     end,
   },
 

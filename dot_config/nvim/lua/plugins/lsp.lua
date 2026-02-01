@@ -44,9 +44,7 @@ return {
       "hrsh7th/cmp-nvim-lsp",
     },
     config = function()
-      local lspconfig = require("lspconfig")
       local cmp_nvim_lsp = require("cmp_nvim_lsp")
-
       local capabilities = cmp_nvim_lsp.default_capabilities()
 
       -- Diagnostic config
@@ -62,41 +60,39 @@ return {
         },
       })
 
-      -- LSP keymaps
-      local on_attach = function(client, bufnr)
-        local opts = { buffer = bufnr, silent = true }
-        local keymap = vim.keymap.set
+      -- LSP keymaps on attach
+      vim.api.nvim_create_autocmd("LspAttach", {
+        callback = function(args)
+          local bufnr = args.buf
+          local opts = { buffer = bufnr, silent = true }
+          local keymap = vim.keymap.set
 
-        keymap("n", "gD", vim.lsp.buf.declaration, opts)
-        keymap("n", "gd", vim.lsp.buf.definition, opts)
-        keymap("n", "K", vim.lsp.buf.hover, opts)
-        keymap("n", "gi", vim.lsp.buf.implementation, opts)
-        keymap("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-        keymap("n", "<leader>rn", vim.lsp.buf.rename, opts)
-        keymap("n", "<leader>ca", vim.lsp.buf.code_action, opts)
-        keymap("n", "gr", vim.lsp.buf.references, opts)
-        keymap("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, opts)
-      end
+          keymap("n", "gD", vim.lsp.buf.declaration, opts)
+          keymap("n", "gd", vim.lsp.buf.definition, opts)
+          keymap("n", "K", vim.lsp.buf.hover, opts)
+          keymap("n", "gi", vim.lsp.buf.implementation, opts)
+          keymap("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+          keymap("n", "<leader>rn", vim.lsp.buf.rename, opts)
+          keymap("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+          keymap("n", "gr", vim.lsp.buf.references, opts)
+          keymap("n", "<leader>f", function() vim.lsp.buf.format({ async = true }) end, opts)
+        end,
+      })
 
-      -- Go
-      lspconfig.gopls.setup({
+      -- LSP server configs using vim.lsp.config (Neovim 0.11+)
+      vim.lsp.config("gopls", {
         capabilities = capabilities,
-        on_attach = on_attach,
         settings = {
           gopls = {
-            analyses = {
-              unusedparams = true,
-            },
+            analyses = { unusedparams = true },
             staticcheck = true,
             gofumpt = true,
           },
         },
       })
 
-      -- Python
-      lspconfig.pyright.setup({
+      vim.lsp.config("pyright", {
         capabilities = capabilities,
-        on_attach = on_attach,
         settings = {
           python = {
             analysis = {
@@ -108,10 +104,8 @@ return {
         },
       })
 
-      -- YAML with Kubernetes schemas
-      lspconfig.yamlls.setup({
+      vim.lsp.config("yamlls", {
         capabilities = capabilities,
-        on_attach = on_attach,
         settings = {
           yaml = {
             schemas = {
@@ -127,43 +121,26 @@ return {
         },
       })
 
-      -- Lua
-      lspconfig.lua_ls.setup({
+      vim.lsp.config("lua_ls", {
         capabilities = capabilities,
-        on_attach = on_attach,
         settings = {
           Lua = {
-            diagnostics = {
-              globals = { "vim" },
-            },
+            diagnostics = { globals = { "vim" } },
             workspace = {
               library = vim.api.nvim_get_runtime_file("", true),
               checkThirdParty = false,
             },
-            telemetry = {
-              enable = false,
-            },
+            telemetry = { enable = false },
           },
         },
       })
 
-      -- Terraform
-      lspconfig.terraformls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
+      vim.lsp.config("terraformls", { capabilities = capabilities })
+      vim.lsp.config("dockerls", { capabilities = capabilities })
+      vim.lsp.config("bashls", { capabilities = capabilities })
 
-      -- Docker
-      lspconfig.dockerls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
-
-      -- Bash
-      lspconfig.bashls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-      })
+      -- Enable the configured servers
+      vim.lsp.enable({ "gopls", "pyright", "yamlls", "lua_ls", "terraformls", "dockerls", "bashls" })
     end,
   },
 
