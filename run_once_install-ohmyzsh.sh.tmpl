@@ -60,6 +60,15 @@ else
     echo "✓ fzf-zsh-plugin already installed"
 fi
 
+# Install TPM (Tmux Plugin Manager)
+TPM_DIR="$HOME/.config/tmux/plugins/tpm"
+if [ ! -d "$TPM_DIR" ]; then
+    echo "Installing TPM..."
+    git clone https://github.com/tmux-plugins/tpm "$TPM_DIR"
+else
+    echo "✓ TPM already installed"
+fi
+
 # Set zsh as default shell
 if [ "$SHELL" != "$(which zsh)" ]; then
     echo "Setting zsh as default shell..."
