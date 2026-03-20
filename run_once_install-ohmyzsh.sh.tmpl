@@ -51,6 +51,15 @@ else
     echo "✓ zsh-syntax-highlighting already installed"
 fi
 
+# Install fzf-zsh-plugin
+FZF_ZSH_DIR="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins/fzf-zsh-plugin"
+if [ ! -d "$FZF_ZSH_DIR" ]; then
+    echo "Installing fzf-zsh-plugin..."
+    git clone https://github.com/unixorn/fzf-zsh-plugin.git "$FZF_ZSH_DIR"
+else
+    echo "✓ fzf-zsh-plugin already installed"
+fi
+
 # Set zsh as default shell
 if [ "$SHELL" != "$(which zsh)" ]; then
     echo "Setting zsh as default shell..."
