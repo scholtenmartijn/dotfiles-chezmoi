@@ -62,23 +62,28 @@ git config --global user.email "your.email@example.com"
 ```
 
 ### 2. GPG Key (for signed commits)
-```bash
-# Install GPG
-sudo apt install gnupg  # Ubuntu/Pop!_OS
-brew install gnupg      # macOS
 
-# Generate key
+GPG is installed automatically via the base packages script (`gnupg` + `pinentry-mac` on macOS).
+
+```bash
+# Generate key (use RSA 4096, your GitHub email)
 gpg --full-generate-key
 
-# Get key ID
+# Get key ID (long hex after "sec rsa4096/")
 gpg --list-secret-keys --keyid-format=long
 
-# Export public key (add to GitHub/GitLab)
+# Export public key — add this to GitHub → Settings → SSH and GPG keys
 gpg --armor --export <key-id>
 
 # Configure git signing
 git config --global user.signingkey <key-id>
 git config --global commit.gpgsign true
+```
+
+**macOS only** — configure pinentry-mac so GPG can prompt for your passphrase:
+```bash
+echo "pinentry-program $(which pinentry-mac)" >> ~/.gnupg/gpg-agent.conf
+gpgconf --kill gpg-agent
 ```
 
 ### 3. MesloLGS NF Font
@@ -105,7 +110,9 @@ This will:
 4. Install development tools (kubectl, docker, azure-cli, aws-cli, claude-code)
 5. Install and configure Neovim with LSP, treesitter, and plugins
 6. Configure Alacritty terminal (Tokyo Night theme)
-7. Apply all dotfiles
+7. Install AeroSpace tiling window manager (macOS)
+8. Install Karabiner-Elements key remapping (macOS)
+9. Apply all dotfiles
 
 ## Post-Install Steps
 
@@ -133,6 +140,10 @@ Then **log out and log back in** (or reboot) for the change to take effect.
 - **Azure CLI** - Azure cloud management
 - **AWS CLI** - AWS cloud management
 - **Claude Code** - AI coding assistant
+
+### macOS Desktop (darwin only)
+- **AeroSpace** - Tiling window manager (i3-like)
+- **Karabiner-Elements** - Key remapping (Linux-style Ctrl shortcuts)
 
 ### Neovim Features
 - **Plugin Manager**: lazy.nvim
@@ -207,11 +218,67 @@ dc      -> docker compose
 
 ## Customization
 
+### Karabiner-Elements (macOS Key Remapping)
+
+Provides Linux-style keyboard shortcuts on macOS:
+
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+C` | Copy (everywhere) |
+| `Ctrl+V` | Paste (everywhere) |
+| `Ctrl+X` | Cut (everywhere) |
+| `Ctrl+Space` | Spotlight / search |
+| `Cmd+C` | SIGINT in terminals (stop process) |
+
+#### Required macOS Setting
+
+Disable the default Ctrl+Space input source shortcut, otherwise macOS intercepts it before Karabiner:
+
+```
+System Settings → Keyboard → Keyboard Shortcuts → Input Sources
+→ Uncheck "Select the previous input source" (^Space)
+```
+
+#### Post-Install
+
+Grant accessibility permissions when prompted:
+```
+System Settings → Privacy & Security → Accessibility → Enable Karabiner components
+```
+
 ### Avante.nvim (AI Assistant)
 Set your Anthropic API key:
 ```bash
 export ANTHROPIC_API_KEY="your-api-key"
 ```
+
+### AeroSpace (macOS Tiling Window Manager)
+
+i3-inspired tiling window manager. Starts at login automatically.
+
+| Key | Action |
+|-----|--------|
+| `Alt+H/J/K/L` | Focus window (vim-style) |
+| `Alt+Shift+H/J/K/L` | Move window |
+| `Alt+1-0` | Switch workspace 1–10 |
+| `Alt+Shift+1-0` | Move window to workspace |
+| `Alt+F` | Fullscreen |
+| `Alt+/` | Toggle tiles layout |
+| `Alt+,` | Toggle accordion layout |
+| `Alt+-` / `Alt+=` | Resize smaller / larger |
+| `Alt+Tab` | Switch to previous workspace |
+| `Alt+Shift+Tab` | Move workspace to next monitor |
+| `Alt+Shift+;` | Enter service mode |
+
+**Service mode** (`Alt+Shift+;`):
+| Key | Action |
+|-----|--------|
+| `Esc` | Reload config & exit |
+| `R` | Flatten workspace tree |
+| `F` | Toggle floating/tiling |
+| `Backspace` | Close all windows but current |
+
+Workspaces 1–5 are pinned to the main monitor, 6–10 to secondary.
 
 ### Powerlevel10k
 Run `p10k configure` to customize the prompt.
@@ -229,12 +296,17 @@ Edit `~/.gitconfig` to set your email and GPG signing key.
 ├── run_once_install-ohmyzsh.sh.tmpl
 ├── run_once_install-devtools.sh.tmpl
 ├── run_once_install-neovim.sh.tmpl
+├── run_once_install-karabiner.sh.tmpl
+├── run_once_install-aerospace.sh.tmpl
 ├── dot_zshrc.tmpl               # Zsh configuration
 ├── dot_p10k.zsh                 # Powerlevel10k config
 ├── dot_gitconfig.tmpl           # Git configuration
+├── dot_aerospace.toml           # AeroSpace tiling WM config
 └── dot_config/
     ├── alacritty/
     │   └── alacritty.toml           # Terminal config (Tokyo Night)
+    ├── karabiner/
+    │   └── karabiner.json           # Key remapping (Linux-style shortcuts)
     └── nvim/
         ├── init.lua
         └── lua/

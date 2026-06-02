@@ -81,8 +81,8 @@ else
 fi
 
 # Install dependencies
-brew install python lua luarocks
-pip3 install pynvim
+brew install python lua luarocks pipx
+pipx install pynvim
 
 # Install Node.js (required for LSP servers: pyright, yamlls, dockerls, bashls)
 if ! command -v node &> /dev/null; then
@@ -103,7 +103,6 @@ fi
 # Install Nerd Fonts via Homebrew
 if ! brew list --cask font-meslo-lg-nerd-font &> /dev/null; then
     echo "Installing MesloLGS Nerd Font..."
-    brew tap homebrew/cask-fonts
     brew install --cask font-meslo-lg-nerd-font
     echo "✓ MesloLGS Nerd Font installed"
     echo "  NOTE: Set your terminal font to 'MesloLGS NF' for icons to display correctly"

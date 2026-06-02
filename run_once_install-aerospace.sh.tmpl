@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+{{ if eq .chezmoi.os "darwin" }}
+echo "=== Installing AeroSpace Tiling Window Manager ==="
+
+if brew list --cask aerospace &> /dev/null; then
+    echo "✓ AeroSpace already installed"
+    exit 0
+fi
+
+echo "Installing AeroSpace..."
+brew install --cask nikitabobko/tap/aerospace
+
+echo "✓ AeroSpace installed successfully"
+echo "  NOTE: Launch AeroSpace from Applications or it will start automatically at next login"
+{{ else }}
+echo "AeroSpace is macOS-only, skipping"
+{{ end }}

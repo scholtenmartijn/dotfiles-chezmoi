@@ -1,0 +1,19 @@
+#!/bin/bash
+set -e
+
+{{ if eq .chezmoi.os "darwin" }}
+echo "=== Installing Karabiner-Elements ==="
+
+if brew list --cask karabiner-elements &> /dev/null; then
+    echo "✓ Karabiner-Elements already installed"
+    exit 0
+fi
+
+echo "Installing Karabiner-Elements..."
+brew install --cask karabiner-elements
+
+echo "✓ Karabiner-Elements installed successfully"
+echo "  NOTE: Grant accessibility permissions when prompted"
+{{ else }}
+echo "Karabiner-Elements is macOS-only, skipping"
+{{ end }}

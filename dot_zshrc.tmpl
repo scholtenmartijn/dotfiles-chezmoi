@@ -91,6 +91,11 @@ alias ..='cd ..'
 alias ...='cd ../..'
 alias grep='grep --color=auto'
 
+{{ if eq .chezmoi.os "darwin" }}
+# macOS: VS Code CLI
+export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/bin"
+{{ end }}
+
 {{ if eq .chezmoi.os "linux" }}
 # Linux-specific
 alias pbcopy='xclip -selection clipboard'
