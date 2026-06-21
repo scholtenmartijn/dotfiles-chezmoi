@@ -63,7 +63,10 @@ Linux distro: `{{ .chezmoi.osRelease.id }}` → `"ubuntu"` or `"pop"`
 ├── run_once_install-ohmyzsh.sh.tmpl       # Oh-My-Zsh + Powerlevel10k
 ├── run_once_install-devtools.sh.tmpl      # kubectl, docker, az, aws, claude-code
 ├── run_once_install-neovim.sh.tmpl        # Neovim + build from source
-├── dot_zshrc.tmpl                         # Zsh config (templated, platform-aware)
+├── run_once_install-opencode.sh.tmpl      # opencode AI agent (--no-modify-path)
+├── dot_zshrc.tmpl                         # Zsh config (templated; sources ~/.zshrc.d/*.zsh)
+├── dot_zshrc.d/                           # Modular zsh fragments (one file per tool)
+│   └── opencode.zsh                       # opencode PATH + alias
 ├── dot_p10k.zsh                           # Powerlevel10k prompt config
 ├── dot_gitconfig.tmpl                     # Git config (templated for credential helper)
 └── dot_config/

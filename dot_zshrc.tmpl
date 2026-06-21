@@ -127,3 +127,11 @@ export FZF_CTRL_R_OPTS='--sort --exact'
 
 # AWS CLI completion
 complete -C '/usr/local/bin/aws_completer' aws
+
+# Load modular config fragments (~/.zshrc.d/*.zsh)
+if [[ -d ~/.zshrc.d ]]; then
+  for _frag in ~/.zshrc.d/*.zsh(N); do
+    source "$_frag"
+  done
+  unset _frag
+fi

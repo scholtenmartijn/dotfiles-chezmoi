@@ -298,7 +298,10 @@ Edit `~/.gitconfig` to set your email and GPG signing key.
 ├── run_once_install-neovim.sh.tmpl
 ├── run_once_install-karabiner.sh.tmpl
 ├── run_once_install-aerospace.sh.tmpl
-├── dot_zshrc.tmpl               # Zsh configuration
+├── run_once_install-opencode.sh.tmpl
+├── dot_zshrc.tmpl               # Zsh configuration (sources ~/.zshrc.d/*.zsh)
+├── dot_zshrc.d/                 # Modular zsh fragments (one file per tool)
+│   └── opencode.zsh
 ├── dot_p10k.zsh                 # Powerlevel10k config
 ├── dot_gitconfig.tmpl           # Git configuration
 ├── dot_aerospace.toml           # AeroSpace tiling WM config

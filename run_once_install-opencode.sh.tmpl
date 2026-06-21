@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+if command -v opencode &> /dev/null || [ -x "$HOME/.opencode/bin/opencode" ]; then
+    echo "✓ opencode already installed"
+    exit 0
+fi
+
+echo "Installing opencode..."
+# --no-modify-path: PATH is owned by ~/.zshrc.d/opencode.zsh (chezmoi-managed),
+# so the installer must not append its own PATH line to ~/.zshrc.
+curl -fsSL https://opencode.ai/install | bash -s -- --no-modify-path
+echo "✓ opencode installed"

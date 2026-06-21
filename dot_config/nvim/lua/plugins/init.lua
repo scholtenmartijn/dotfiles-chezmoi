@@ -82,28 +82,24 @@ return {
   },
 
   -- Treesitter
+  -- Pinned to the stable `master` branch. The default `main` branch is the
+  -- experimental rewrite, which drops parsers.ft_to_lang and breaks Telescope's
+  -- previewer (and other plugins).
   {
     "nvim-treesitter/nvim-treesitter",
+    branch = "master",
+    lazy = false,
     build = ":TSUpdate",
     config = function()
-      -- Install parsers
-      local parsers = {
-        "lua", "vim", "vimdoc", "go", "gomod", "gosum", "python",
-        "yaml", "json", "toml", "hcl", "terraform", "dockerfile",
-        "bash", "markdown", "markdown_inline",
-      }
-      vim.api.nvim_create_autocmd("FileType", {
-        callback = function(args)
-          pcall(vim.treesitter.start, args.buf)
-        end,
+      require("nvim-treesitter.configs").setup({
+        ensure_installed = {
+          "lua", "vim", "vimdoc", "go", "gomod", "gosum", "python",
+          "yaml", "json", "toml", "hcl", "terraform", "dockerfile",
+          "bash", "markdown", "markdown_inline",
+        },
+        highlight = { enable = true },
+        indent = { enable = true },
       })
-      -- Ensure parsers are installed
-      local installed = vim.tbl_keys(vim.treesitter.language.get_installed and vim.treesitter.language.get_installed() or {})
-      for _, parser in ipairs(parsers) do
-        if not vim.tbl_contains(installed, parser) then
-          pcall(vim.cmd, "TSInstall " .. parser)
-        end
-      end
     end,
   },
 
