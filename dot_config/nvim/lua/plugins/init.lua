@@ -57,7 +57,9 @@ return {
   -- Fuzzy finder
   {
     "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
+    -- No branch pin: master uses core vim.treesitter.language.get_lang /
+    -- vim.treesitter.start. The 0.1.x branch is frozen at 0.1.8 and still calls
+    -- nvim-treesitter's removed parsers.ft_to_lang, which breaks the previewer.
     dependencies = {
       "nvim-lua/plenary.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
@@ -82,23 +84,36 @@ return {
   },
 
   -- Treesitter
-  -- Pinned to the stable `master` branch. The default `main` branch is the
-  -- experimental rewrite, which drops parsers.ft_to_lang and breaks Telescope's
-  -- previewer (and other plugins).
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
+    branch = "main",
     lazy = false,
     build = ":TSUpdate",
     config = function()
-      require("nvim-treesitter.configs").setup({
-        ensure_installed = {
-          "lua", "vim", "vimdoc", "go", "gomod", "gosum", "python",
-          "yaml", "json", "toml", "hcl", "terraform", "dockerfile",
-          "bash", "markdown", "markdown_inline",
-        },
-        highlight = { enable = true },
-        indent = { enable = true },
+      local parsers = {
+        "lua", "vim", "vimdoc", "go", "gomod", "gosum", "python",
+        "yaml", "json", "toml", "hcl", "terraform", "dockerfile",
+        "bash", "markdown", "markdown_inline",
+      }
+
+      -- Install only what is missing. vim.treesitter.language.get_installed
+      -- does not exist in core, so the installed list has to come from
+      -- nvim-treesitter itself.
+      local nts = require("nvim-treesitter")
+      local installed = nts.get_installed("parsers")
+      local missing = vim.tbl_filter(function(parser)
+        return not vim.tbl_contains(installed, parser)
+      end, parsers)
+      if #missing > 0 then
+        nts.install(missing)
+      end
+
+      -- The main branch does not enable highlighting itself; core does it
+      -- per buffer.
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function(args)
+          pcall(vim.treesitter.start, args.buf)
+        end,
       })
     end,
   },
