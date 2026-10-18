@@ -71,6 +71,10 @@
 [color]
     ui = auto
 
+# Always talk to GitHub over SSH, even when a remote was cloned/added as https
+[url "git@github.com:"]
+    insteadOf = https://github.com/
+
 [credential]
 {{ if eq .chezmoi.os "darwin" }}
     helper = osxkeychain
