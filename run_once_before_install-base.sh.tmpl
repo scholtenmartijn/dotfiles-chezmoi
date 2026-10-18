@@ -39,6 +39,31 @@ for pkg in "${PACKAGES[@]}"; do
     fi
 done
 
+{{ else if or (eq .chezmoi.osRelease.id "arch") (eq (index .chezmoi.osRelease "idLike" | default "") "arch") }}
+
+# Arch / CachyOS
+# Refresh the package database and upgrade first (equivalent of apt update).
+# Installing from a stale database gives 404s on the mirrors, and installing
+# without upgrading is a partial upgrade, which breaks Arch systems.
+sudo pacman -Syu --noconfirm
+
+# --needed skips packages that are already installed
+sudo pacman -S --needed --noconfirm \
+    curl \
+    wget \
+    git \
+    unzip \
+    base-devel \
+    gnupg \
+    jq \
+    ripgrep \
+    fd \
+    fzf \
+    tmux \
+    htop \
+    git-delta \
+    wl-clipboard
+
 {{ end }}
 {{ else if eq .chezmoi.os "darwin" }}
 

@@ -50,16 +50,24 @@ chezmoi init --apply .
 ## Template Variables
 
 Chezmoi templates use `{{ .chezmoi.os }}` for platform detection:
-- `"linux"` — Ubuntu/Pop!_OS/WSL
+- `"linux"` — Ubuntu/Pop!_OS/WSL, CachyOS
 - `"darwin"` — macOS
 
-Linux distro: `{{ .chezmoi.osRelease.id }}` → `"ubuntu"` or `"pop"`
+Linux distro: `{{ .chezmoi.osRelease.id }}` → `"ubuntu"`, `"pop"`, `"cachyos"` (or `"arch"`)
+
+Arch-family detection (CachyOS has `ID=cachyos ID_LIKE=arch`; plain Arch has no `ID_LIKE`, hence `index`):
+```
+{{ if or (eq .chezmoi.osRelease.id "arch") (eq (index .chezmoi.osRelease "idLike" | default "") "arch") }}
+```
+Install scripts branch three ways inside the `linux` block: ubuntu/pop (apt), arch (`pacman -S --needed --noconfirm`), then darwin (brew). The base script runs `pacman -Syu` first; later scripts rely on that fresh database and must not call `pacman -Sy` themselves (partial upgrade).
+
+Git identity (`.name`, `.email`, `.signingkey`) comes from `[data]` in `.chezmoi.toml.tmpl`: it is read from an existing global git config at `chezmoi init` time and only prompted (`promptStringOnce`) when missing. `dot_gitconfig.tmpl` enables GPG signing only when `.signingkey` is set.
 
 ## Architecture
 
 ```
 .
-├── run_once_before_install-base.sh.tmpl   # Base packages (apt/brew)
+├── run_once_before_install-base.sh.tmpl   # Base packages (apt/pacman/brew)
 ├── run_once_install-ohmyzsh.sh.tmpl       # Oh-My-Zsh + Powerlevel10k
 ├── run_once_install-devtools.sh.tmpl      # kubectl, docker, az, aws, claude-code
 ├── run_once_install-neovim.sh.tmpl        # Neovim + build from source
@@ -71,6 +79,9 @@ Linux distro: `{{ .chezmoi.osRelease.id }}` → `"ubuntu"` or `"pop"`
 ├── dot_gitconfig.tmpl                     # Git config (templated for credential helper)
 └── dot_config/
     ├── alacritty/alacritty.toml           # Terminal: Tokyo Night theme, MesloLGS NF
+    ├── hypr/                              # Hyprland (Linux only, native Lua config; CachyOS + Noctalia)
+    │   ├── hyprland.lua                   # Entry point, requires config/*.lua in order
+    │   └── config/binds.lua               # Keybindings: mirrors dot_aerospace.toml with SUPER instead of Alt
     └── nvim/
         ├── init.lua                        # Bootstraps lazy.nvim, sets leader key
         └── lua/

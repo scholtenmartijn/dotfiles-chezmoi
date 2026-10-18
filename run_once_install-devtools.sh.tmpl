@@ -83,6 +83,66 @@ else
     echo "✓ Alacritty already installed"
 fi
 
+{{ else if or (eq .chezmoi.osRelease.id "arch") (eq (index .chezmoi.osRelease "idLike" | default "") "arch") }}
+
+# Install kubectl
+if ! command -v kubectl &> /dev/null; then
+    echo "Installing kubectl..."
+    sudo pacman -S --needed --noconfirm kubectl
+else
+    echo "✓ kubectl already installed"
+fi
+
+# Install kubectx and kubens
+if ! command -v kubectx &> /dev/null; then
+    echo "Installing kubectx/kubens..."
+    sudo pacman -S --needed --noconfirm kubectx
+else
+    echo "✓ kubectx/kubens already installed"
+fi
+
+# Install Docker
+if ! command -v docker &> /dev/null; then
+    echo "Installing Docker..."
+    sudo pacman -S --needed --noconfirm docker docker-compose docker-buildx
+    sudo systemctl enable --now docker.service
+    sudo usermod -aG docker "$USER"
+else
+    echo "✓ Docker already installed"
+fi
+
+# Install Azure CLI
+if ! command -v az &> /dev/null; then
+    echo "Installing Azure CLI..."
+    sudo pacman -S --needed --noconfirm azure-cli
+else
+    echo "✓ Azure CLI already installed"
+fi
+
+# Install AWS CLI
+if ! command -v aws &> /dev/null; then
+    echo "Installing AWS CLI..."
+    sudo pacman -S --needed --noconfirm aws-cli-v2
+else
+    echo "✓ AWS CLI already installed"
+fi
+
+# Install Claude Code (native installer, lands in ~/.local/bin)
+if ! command -v claude &> /dev/null && [ ! -x "$HOME/.local/bin/claude" ]; then
+    echo "Installing Claude Code..."
+    curl -fsSL https://claude.ai/install.sh | bash
+else
+    echo "✓ Claude Code already installed"
+fi
+
+# Install Alacritty
+if ! command -v alacritty &> /dev/null; then
+    echo "Installing Alacritty..."
+    sudo pacman -S --needed --noconfirm alacritty
+else
+    echo "✓ Alacritty already installed"
+fi
+
 {{ end }}
 {{ else if eq .chezmoi.os "darwin" }}
 

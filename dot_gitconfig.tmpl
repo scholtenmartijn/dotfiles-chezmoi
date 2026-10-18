@@ -1,7 +1,9 @@
 [user]
-    name = {{ .chezmoi.username }}
-    # email = your.email@example.com
-    # signingkey = YOUR_GPG_KEY_ID
+    name = {{ .name }}
+    email = {{ .email }}
+{{- if .signingkey }}
+    signingkey = {{ .signingkey }}
+{{- end }}
 
 [core]
     editor = nvim
@@ -44,8 +46,16 @@
 [difftool]
     prompt = false
 
+{{ if .signingkey -}}
 [commit]
-    # gpgsign = true
+    gpgsign = true
+
+[tag]
+    gpgsign = true
+
+[gpg]
+    program = gpg
+{{- end }}
 
 [alias]
     st = status

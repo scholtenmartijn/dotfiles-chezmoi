@@ -101,9 +101,16 @@ export PATH="$PATH:/Applications/Visual Studio Code.app/Contents/Resources/app/b
 
 {{ if eq .chezmoi.os "linux" }}
 # Linux-specific
-alias pbcopy='xclip -selection clipboard'
-alias pbpaste='xclip -selection clipboard -o'
-alias fd='fdfind'
+# Clipboard: wl-clipboard on Wayland, xclip on X11
+if (( $+commands[wl-copy] )); then
+  alias pbcopy='wl-copy'
+  alias pbpaste='wl-paste --no-newline'
+elif (( $+commands[xclip] )); then
+  alias pbcopy='xclip -selection clipboard'
+  alias pbpaste='xclip -selection clipboard -o'
+fi
+# Debian/Ubuntu ship fd as fdfind; Arch ships it as fd
+(( $+commands[fdfind] )) && alias fd='fdfind'
 {{ end }}
 
 # FZF configuration
@@ -111,9 +118,13 @@ export FZF_DEFAULT_OPTS='--height 40% --layout=reverse --border'
 export FZF_CTRL_R_OPTS='--sort --exact'
 
 {{ if eq .chezmoi.os "linux" }}
-# fzf-zsh-plugin doesn't handle apt-installed fzf, source key bindings explicitly
+# fzf-zsh-plugin doesn't handle distro-installed fzf, source key bindings explicitly
+# Debian/Ubuntu path
 [ -f /usr/share/doc/fzf/examples/key-bindings.zsh ] && source /usr/share/doc/fzf/examples/key-bindings.zsh
 [ -f /usr/share/doc/fzf/examples/completion.zsh ] && source /usr/share/doc/fzf/examples/completion.zsh
+# Arch path
+[ -f /usr/share/fzf/key-bindings.zsh ] && source /usr/share/fzf/key-bindings.zsh
+[ -f /usr/share/fzf/completion.zsh ] && source /usr/share/fzf/completion.zsh
 {{ end }}
 
 # Load Powerlevel10k config
@@ -126,7 +137,7 @@ export FZF_CTRL_R_OPTS='--sort --exact'
 [[ -f /etc/bash_completion.d/azure-cli ]] && source /etc/bash_completion.d/azure-cli
 
 # AWS CLI completion
-complete -C '/usr/local/bin/aws_completer' aws
+(( $+commands[aws_completer] )) && complete -C "$commands[aws_completer]" aws
 
 # Load modular config fragments (~/.zshrc.d/*.zsh)
 if [[ -d ~/.zshrc.d ]]; then

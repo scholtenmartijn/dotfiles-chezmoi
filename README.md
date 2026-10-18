@@ -53,13 +53,19 @@ Before bootstrapping, ensure you have the following set up:
 ### 1. Git Configuration
 ```bash
 # Install git
-sudo apt install git  # Ubuntu/Pop!_OS
-brew install git      # macOS
+sudo apt install git     # Ubuntu/Pop!_OS
+sudo pacman -S git       # CachyOS/Arch
+brew install git         # macOS
 
 # Configure identity
 git config --global user.name "Your Name"
 git config --global user.email "your.email@example.com"
 ```
+
+If git is already configured, chezmoi reuses `user.name`, `user.email` and `user.signingkey`
+from the existing global config during `chezmoi init` and does not prompt. On a machine
+without a git identity it asks for them once and stores them in `~/.config/chezmoi/chezmoi.toml`
+(change them later with `chezmoi edit-config`, not `git config --global`, since `~/.gitconfig` is managed).
 
 ### 2. GPG Key (for signed commits)
 
@@ -87,11 +93,12 @@ gpgconf --kill gpg-agent
 ```
 
 ### 3. MesloLGS NF Font
-Required for Powerlevel10k and Alacritty. Download from [powerlevel10k-media](https://github.com/romkatv/powerlevel10k-media) or install via `brew install --cask font-meslo-lg-nerd-font` on macOS.
+Required for Powerlevel10k and Alacritty. Installed automatically by the Neovim script (download from [powerlevel10k-media](https://github.com/romkatv/powerlevel10k-media) on Ubuntu, `ttf-meslo-nerd` via pacman on CachyOS/Arch, `font-meslo-lg-nerd-font` cask on macOS).
 
 ### 4. Install Chezmoi
 ```bash
 sh -c "$(curl -fsLS get.chezmoi.io)" -- -b ~/.local/bin  # Ubuntu/Pop!_OS
+sudo pacman -S chezmoi                                    # CachyOS/Arch
 brew install chezmoi                                      # macOS
 ```
 
@@ -105,14 +112,24 @@ chezmoi init --apply <repo-url>
 
 This will:
 1. Clone this repository
-2. Install base system packages
+2. Install base system packages (apt on Ubuntu/Pop!_OS, pacman on CachyOS/Arch, brew on macOS)
 3. Install and configure Oh-My-Zsh with Powerlevel10k
 4. Install development tools (kubectl, docker, azure-cli, aws-cli, claude-code)
 5. Install and configure Neovim with LSP, treesitter, and plugins
 6. Configure Alacritty terminal (Tokyo Night theme)
 7. Install AeroSpace tiling window manager (macOS)
 8. Install Karabiner-Elements key remapping (macOS)
-9. Apply all dotfiles
+9. Apply all dotfiles (including the Hyprland config on Linux)
+
+To use an already-cloned working copy as the source instead of letting chezmoi clone into
+`~/.local/share/chezmoi`:
+
+```bash
+ln -s ~/Projects/dotfiles-chezmoi ~/.local/share/chezmoi
+chezmoi init        # renders ~/.config/chezmoi/chezmoi.toml, no clone
+chezmoi diff
+chezmoi apply -v
+```
 
 ## Post-Install Steps
 
@@ -144,6 +161,9 @@ Then **log out and log back in** (or reboot) for the change to take effect.
 ### macOS Desktop (darwin only)
 - **AeroSpace** - Tiling window manager (i3-like)
 - **Karabiner-Elements** - Key remapping (Linux-style Ctrl shortcuts)
+
+### Linux Desktop (CachyOS)
+- **Hyprland** - Wayland compositor config (native Lua, CachyOS + Noctalia); keybindings mirror AeroSpace with Super instead of Alt. Config only, Hyprland itself comes with the CachyOS install.
 
 ### Neovim Features
 - **Plugin Manager**: lazy.nvim
