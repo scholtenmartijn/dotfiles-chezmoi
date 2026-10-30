@@ -72,13 +72,16 @@ Git identity (`.name`, `.email`, `.signingkey`) comes from `[data]` in `.chezmoi
 ├── run_once_install-devtools.sh.tmpl      # kubectl, docker, az, aws, claude-code
 ├── run_once_install-neovim.sh.tmpl        # Neovim + build from source
 ├── run_once_install-opencode.sh.tmpl      # opencode AI agent (--no-modify-path)
+├── run_once_install-worktrunk.sh.tmpl     # worktrunk `wt` (brew/pacman/cargo; no shell install)
 ├── dot_zshrc.tmpl                         # Zsh config (templated; sources ~/.zshrc.d/*.zsh)
 ├── dot_zshrc.d/                           # Modular zsh fragments (one file per tool)
-│   └── opencode.zsh                       # opencode PATH + alias
+│   ├── opencode.zsh                       # opencode PATH + alias
+│   └── worktrunk.zsh                      # wt shell init + wta/wtj/wtprune cross-repo helpers
 ├── dot_p10k.zsh                           # Powerlevel10k prompt config
 ├── dot_gitconfig.tmpl                     # Git config (templated for credential helper)
 └── dot_config/
     ├── alacritty/alacritty.toml           # Terminal: Tokyo Night theme, MesloLGS NF
+    ├── worktrunk/config.toml              # wt worktree path (not .tmpl: {{ }} is wt syntax)
     ├── hypr/                              # Hyprland (Linux only, native Lua config; CachyOS + Noctalia)
     │   ├── hyprland.lua                   # Entry point, requires config/*.lua in order
     │   └── config/binds.lua               # Keybindings: mirrors dot_aerospace.toml with SUPER instead of Alt

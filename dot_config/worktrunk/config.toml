@@ -1,0 +1,3 @@
+# Not a chezmoi template: {{ }} is worktrunk syntax.
+# Worktrees go in a shared .worktrees folder next to the repo.
+worktree-path = "{{ repo_path }}/../.worktrees/{{ repo }}/{{ branch | sanitize }}"

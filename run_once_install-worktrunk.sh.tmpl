@@ -1,0 +1,27 @@
+#!/bin/bash
+set -e
+
+if command -v wt &> /dev/null; then
+    echo "✓ worktrunk already installed"
+    exit 0
+fi
+
+echo "Installing worktrunk..."
+# Do not run `wt config shell install`: it appends to ~/.zshrc (chezmoi-managed).
+# Shell integration is in ~/.zshrc.d/worktrunk.zsh.
+{{ if eq .chezmoi.os "darwin" -}}
+brew install worktrunk
+{{ else if eq .chezmoi.os "linux" -}}
+{{ if or (eq .chezmoi.osRelease.id "arch") (eq (index .chezmoi.osRelease "idLike" | default "") "arch") -}}
+sudo pacman -S --needed --noconfirm worktrunk
+{{ else -}}
+# No apt package. Use cargo.
+if command -v cargo &> /dev/null; then
+    cargo install worktrunk
+else
+    echo "⚠ cargo not found, skipping worktrunk install"
+    exit 0
+fi
+{{ end -}}
+{{ end -}}
+echo "✓ worktrunk installed"
