@@ -41,6 +41,13 @@ return {
         terraform = { "tflint" },
       }
 
+      -- Drop "line too long" diagnostics. yamllint defaults to 80 columns and
+      -- pylint to 100, which fires on nearly every k8s manifest and Helm values
+      -- file. Prepended so nvim-lint's own default args are preserved.
+      table.insert(lint.linters.yamllint.args, 1, "{extends: default, rules: {line-length: disable}}")
+      table.insert(lint.linters.yamllint.args, 1, "-d")
+      table.insert(lint.linters.pylint.args, 1, "--disable=line-too-long")
+
       local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
 
       vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
