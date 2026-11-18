@@ -249,6 +249,11 @@ Provides Linux-style keyboard shortcuts on macOS:
 | `Ctrl+X` | Cut (everywhere) |
 | `Ctrl+Space` | Spotlight / search |
 | `Cmd+C` | SIGINT in terminals (stop process) |
+| `Ctrl+Z/A/S/F/T/W` | Undo / select all / save / find / new tab / close tab (not in terminals) |
+
+#### Kinesis Advantage 360 Pro (ZMK)
+
+The Adv360 reports itself as a keyboard and a pointing device (ZMK mouse keys). Karabiner does not modify pointing devices by default, so `karabiner.json` has a `devices` entry (vendor `7504`, product `24926`) with `"ignore": false`. You can also turn it on in Karabiner-Elements → Devices → "Modify events".
 
 #### Required macOS Setting
 
