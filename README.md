@@ -255,6 +255,8 @@ Provides Linux-style keyboard shortcuts on macOS:
 
 The Adv360 reports itself as a keyboard and a pointing device (ZMK mouse keys). Karabiner does not modify pointing devices by default, so `karabiner.json` has a `devices` entry (vendor `7504`, product `24926`) with `"ignore": false`. You can also turn it on in Karabiner-Elements → Devices → "Modify events".
 
+The Karabiner virtual keyboard is ISO (it matches the built-in MacBook keyboard). macOS swaps the backtick key on ISO, so the ANSI Adv360 types `§` instead of `` ` ``. The Adv360 device entry maps `grave_accent_and_tilde` to `non_us_backslash` to correct this.
+
 #### Required macOS Setting
 
 Disable the default Ctrl+Space input source shortcut, otherwise macOS intercepts it before Karabiner:

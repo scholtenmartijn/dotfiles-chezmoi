@@ -10,6 +10,8 @@
 {{- if not $name -}}{{- $name = promptStringOnce . "name" "Git author name" .chezmoi.username -}}{{- end -}}
 {{- if not $email -}}{{- $email = promptStringOnce . "email" "Git email" -}}{{- end -}}
 {{- if not $signingkey -}}{{- $signingkey = promptStringOnce . "signingkey" "GPG signing key ID (empty = no signing)" -}}{{- end -}}
+sourceDir = {{ .chezmoi.sourceDir | quote }}
+
 [data]
     name = {{ $name | quote }}
     email = {{ $email | quote }}
